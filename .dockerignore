@@ -4,3 +4,16 @@
 
 .git
 .gitignore
+.env
+__pycache__
+.venv
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache
+tests
+screenshots
+exercises.md
+README.md
+LAB_GUIDE.md
+DEPLOYMENT.md
