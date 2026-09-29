@@ -18,7 +18,7 @@
 
 | Mục | Nội dung |
 |-----|----------|
-| Public URL | https://TODO-thay-bang-url-that.up.railway.app |
+| Public URL | https://day12-agent-production-9ba1.up.railway.app |
 | Platform | Railway |
 | Ngày deploy | 2026-09-29 |
 
@@ -73,7 +73,24 @@ done; echo
 Dán output của các lệnh trên vào đây:
 
 ```
-(điền output)
+# 1. Liveness — mong đợi 200 {"status":"ok"}
+HTTP/1.1 200 OK
+{"status":"ok","service":"day12-agent","version":"1.0.0"}
+
+# 2. Readiness — mong đợi 200 {"status":"ready"} (đã nối được Redis)
+HTTP/1.1 200 OK
+{"status":"ready","redis":true}
+
+# 3. Không có API key — mong đợi 401
+HTTP/1.1 401 Unauthorized
+{"detail":"invalid or missing API key"}
+
+# 4. Có API key — mong đợi 200 kèm câu trả lời
+HTTP/1.1 200 OK
+{"answer":"Ngắn gọn: Deploy la gi phụ thuộc vào ba yếu tố — cấu hình qua biến môi trường, health check để orchestrator biết trạng thái, và giới hạn tài nguyên.","user_id":"sv-test","history_length":0,"cost_usd":2.265e-05,"tokens":{"in":3,"out":37}}
+
+# 5. Rate limit — gọi 15 lần, những lần cuối phải trả 429
+200 200 200 200 200 200 200 200 200 429 429 429 429 429 429
 ```
 
 ## Ảnh Chụp Màn Hình
@@ -82,20 +99,3 @@ Dán output của các lệnh trên vào đây:
 
 - `screenshots/dashboard.png` — trang quản lý service trên platform
 - `screenshots/health.png` — kết quả gọi `/health` từ trình duyệt hoặc curl
-
----
-
-## Nếu Dùng Phương Án Dự Phòng
-
-Không đăng ký được tài khoản cloud? Vẫn nộp được bài, nhưng CP5 tối đa 60% điểm:
-
-1. Đặt `LOCAL_FALLBACK=true` trong `.env`
-2. Chạy `docker compose up -d` rồi kiểm tra `docker compose ps`
-3. Chụp màn hình vào `screenshots/`
-4. Chạy `pytest tests/test_cp5.py -v` — bộ test sẽ tự chuyển sang kiểm tra
-   `http://localhost:8000`
-5. Ghi rõ lý do không deploy được vào phần dưới đây:
-
-```
-(điền lý do nếu dùng phương án dự phòng, ngược lại xóa mục này)
-```
